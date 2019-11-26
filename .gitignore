@@ -1,0 +1,7 @@
+.idea
+/node_modules
+package-lock.json
+/build
+/src/module/js/**.min.js
+/src/module/js/**.js.map
+/src/module/css/**.css
