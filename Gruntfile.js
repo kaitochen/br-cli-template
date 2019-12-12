@@ -24,7 +24,13 @@ module.exports = function (grunt) {
 				src: 'build/module/css/**.scss'
 			},
 			cleanDev: {
-				src: ['src/module/js/**.min.js','src/module/js/**.min.js.map','src/module/css/**.css']
+				src: ['src/module/js/**.min.js', 'src/module/js/**.min.js.map', 'src/module/css/**.css']
+			},
+			cleanHtml: {
+				src: ['src/**.html', 'src/view/**/**.html']
+			},
+			cleanTpl: {
+				src: ['build/**.tpl', 'build/view/**/**.tpl', 'build/template']
 			}
 		},
 		copy: {
@@ -130,14 +136,30 @@ module.exports = function (grunt) {
 					livereload: lrPort
 				},
 				files: ['src/module/css/**.scss'],
-				tasks: ['sass:devSass']
+				tasks: ['sass:devSass', 'autoprefixer:dev']
+			},
+			tpl: {
+				options: {
+					spawn: false,
+					livereload: lrPort
+				},
+				files: ['src/index.tpl', 'src/view/**/**.tpl'],
+				tasks: ['br_html']
+			},
+			template: {
+				options: {
+					spawn: false,
+					livereload: lrPort
+				},
+				files: ['src/template/**.tpl'],
+				tasks: ['br_html']
 			},
 			html: {
 				options: {
 					spawn: false,
 					livereload: lrPort
 				},
-				files: ['index.html', ['src/**/**.html']],
+				files: ['src/index.html', 'src/view/**/**.html'],
 			}
 		},
 		uglify: {
@@ -161,13 +183,53 @@ module.exports = function (grunt) {
 				length: 8,
 			},
 			dist: {
-				src: ['build/module/js/**.min.js','build/module/css/**.css']
+				src: ['build/module/js/**.min.js', 'build/module/css/**.css']
 			}
 		},
 		usemin: {
-			html: ['build/index.html','build/view/**/**.html']
+			html: ['build/index.html', 'build/view/**/**.html']
+		},
+		br_html: {
+			dev: {
+				files: {
+					src: ['src/view/**/**.tpl', 'src/**.tpl'],
+					ext: '.html'
+				}
+			},
+			build: {
+				files: {
+					src: ['build/view/**/**.tpl', 'build/**.tpl'],
+					ext: '.html'
+				}
+			}
+
+		},
+		autoprefixer: {
+			options: {
+				browsers: ['last 2 versions', 'ie 8', 'ie 9', 'ie 10']
+			},
+			dev: {
+				files: [{
+					expand: true,
+					cwd: 'src/module/css',
+					src: '**.css',
+					dest: 'src/module/css/',
+					ext: '.css'
+				}]
+			},
+			build: {
+				files: [{
+					expand: true,
+					cwd: 'build/module/css/',
+					src: '**.css',
+					dest: 'build/module/css/',
+					ext: '.css'
+				}]
+			}
 		}
 	});
+	grunt.loadTasks('tasks');
+	grunt.loadNpmTasks('grunt-autoprefixer');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-filerev');
@@ -177,9 +239,10 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-connect');
 	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.registerTask('default', ['clean:cleanBuild', 'copy:buildCopy', 'babel:buildBabel', 'clean:cleanBabel', 'uglify', 'sass:buildSass', 'clean:cleanSass']);
-	grunt.registerTask('live', ['babel:devBabel', 'sass:devSass', 'connect', 'watch']);
-	grunt.registerTask('cleanDev', ['clean:cleanDev']);
-	grunt.registerTask('rev', ['filerev','usemin']);
+	grunt.registerTask('default', ['clean:cleanBuild', 'copy:buildCopy', 'br_html:build', 'clean:cleanTpl', 'babel:buildBabel', 'clean:cleanBabel', 'uglify', 'sass:buildSass', 'autoprefixer:build', 'clean:cleanSass']);
+	grunt.registerTask('live', ['br_html:dev', 'babel:devBabel', 'sass:devSass', 'autoprefixer:dev', 'connect', 'watch']);
+	grunt.registerTask('cleanDev', ['clean:cleanDev', 'clean:cleanHtml']);
+	grunt.registerTask('rev', ['filerev', 'usemin']);
+	grunt.registerTask('test', ['br_html']);
 
 };
