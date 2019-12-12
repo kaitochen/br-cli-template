@@ -1,0 +1,1 @@
+#### 在template文件中的左右文件均支持nunjucks的语法，也可以直接使用html的语法

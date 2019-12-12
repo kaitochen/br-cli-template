@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="./module/css/index.css">
 </head>
 <body>
+{%src=header.tpl;%}
 </body>
 <script src="./plugin/jQuery/jQuery-3.4.1.min.js"></script>
 <script src="./plugin/bootstrap/bootstrap.min.js"></script>

@@ -187,7 +187,7 @@ module.exports = function (grunt) {
 			}
 		},
 		usemin: {
-			html: ['build/index.html', 'build/view/**/**.html']
+			html: ['build/index.tpl', 'build/view/**/**.html']
 		},
 		br_html: {
 			dev: {
